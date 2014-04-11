@@ -1,18 +1,18 @@
 #! /bin/sh
-#  /etc/init.d/clidispatcher
+# /etc/init.d/clidispatcher
 
 ### BEGIN INIT INFO
-# Provides:          mydaemon
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
+# Provides: mydaemon
+# Required-Start: $remote_fs $syslog
+# Required-Stop: $remote_fs $syslog
 # Short-Description: Starts the MyDaemon service
-# Description:       This file is used to start the daemon
-#                    and should be placed in /etc/init.d
+# Description: This file is used to start the daemon
+# and should be placed in /etc/init.d
 ### END INIT INFO
 
-# Author:   Sheldon Neilson <sheldon[AT]neilson.co.za>
-# Url:      www.neilson.co.za
-# Date:     25/04/2013
+# Author: Sheldon Neilson <sheldon[AT]neilson.co.za>
+# Url: www.neilson.co.za
+# Date: 25/04/2013
 
 NAME="clidispatcher"
 DESC="Beanstalkd CLI dispatcher"
@@ -27,10 +27,10 @@ FILE_PATH="/usr/local/$NAME"
 JAVA_HOME="/usr/lib/jvm/default-java"
 
 # Our classpath including our jar file and the Apache Commons Daemon library
-CLASS_PATH="$FILE_PATH/MyDaemon.jar:$FILE_PATH/lib/commons-daemon-1.0.15.jar"
+CLASS_PATH="$FILE_PATH/$NAME.jar:$FILE_PATH/lib/commons-daemon-1.0.15.jar"
 
 # The fully qualified name of the class to execute
-CLASS="com.emanuelecasadio.beanstalkd.clidispatcher.CliDispatcher"
+CLASS="com.emanuelecasadio.beanstalkd.clidispatcher.DaemonWrapper"
 
 # Any command line arguments to be passed to the our Java Daemon implementations init() method
 # IP, PORT, MAX_CLIS, PRIORITY, MAX_SHUTDOWN_TIME, MAX_CLI_TIME, DELAY
@@ -38,7 +38,7 @@ CLASS="com.emanuelecasadio.beanstalkd.clidispatcher.CliDispatcher"
 ARGS="127.0.0.1 11300 5 2000 60 30 30"
 
 #The user to run the daemon as
-USER="ubuntu"
+USER="root"
 
 # The file that will contain our process identification number (pid) for other scripts/programs that need to access it.
 PID="/var/run/$NAME.pid"
@@ -50,14 +50,14 @@ LOG_OUT="$FILE_PATH/log/$NAME.out"
 LOG_ERR="$FILE_PATH/err/$NAME.err"
 
 jsvc_exec()
-{  
+{
     cd $FILE_PATH
-    $EXEC -home $JAVA_HOME -cp $CLASS_PATH -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $CLASS $ARGS
+    $EXEC -home $JAVA_HOME -cwd $FILE_PATH -cp $CLASS_PATH -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $CLASS $ARGS
 }
 
 case "$1" in
-    start) 
-        echo "Starting the $DESC..."       
+    start)
+        echo "Starting the $DESC..."
        
         # Start the service
         jsvc_exec
@@ -68,7 +68,7 @@ case "$1" in
         echo "Stopping the $DESC..."
        
         # Stop the service
-        jsvc_exec "-stop"      
+        jsvc_exec "-stop"
        
         echo "The $DESC has stopped."
     ;;

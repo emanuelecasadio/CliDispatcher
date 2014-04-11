@@ -14,7 +14,8 @@ import org.apache.commons.daemon.DaemonInitException;
 public class DaemonWrapper implements Daemon {
 
     private Thread serverThread; 
-    private boolean stopped = false;
+    private boolean stopped;
+    private Object dumblock;
     private final long MAX_WAIT = 60000; // Maximum waiting time in milliseconds
     
     public synchronized boolean isStopped(){
@@ -26,9 +27,10 @@ public class DaemonWrapper implements Daemon {
     }
    
     public void init(DaemonContext daemonContext) throws DaemonInitException, Exception {
-        String[] args = daemonContext.getArguments(); 
-       
-        serverThread = new CliDispatcher(this,args);
+        String[] args = daemonContext.getArguments();
+        dumblock = new Object();
+        stopped = false;
+        serverThread = new CliDispatcher(this,args,dumblock);
     }
 
     public void start() throws Exception {
@@ -37,7 +39,10 @@ public class DaemonWrapper implements Daemon {
     }
 
     public void stop() throws Exception {
-        this.setStopped(true);
+    	this.setStopped(true);
+    	synchronized (dumblock) {
+    		dumblock.notifyAll();
+		}
         try{
             serverThread.join(MAX_WAIT);
         }catch(InterruptedException e){

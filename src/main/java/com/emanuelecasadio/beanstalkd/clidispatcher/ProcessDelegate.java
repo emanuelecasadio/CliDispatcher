@@ -33,26 +33,34 @@ public class ProcessDelegate implements Runnable {
 		this.jobid = jobid;
 		this.command = command;
 		
-		TIMEOUT = Integer.parseInt(args[6]);
-		PRIORITY = Integer.parseInt(args[3]);
-		DELAY_SECONDS = Integer.parseInt(args[7]);
+		TIMEOUT = Integer.parseInt(args[5]);
+		PRIORITY = Integer.parseInt(args[2]);
+		DELAY_SECONDS = Integer.parseInt(args[6]);
 		
 		peh = new DummyProcessExecutorHandler();
 	}
 	
 	@Override
 	public void run(){
-		CommandLine cl = new CommandLine(command);
+		CommandLine cl = CommandLine.parse(command);
 		try {
 			Future<Long> result = ProcessExecutor.runProcess(cl, peh, TIMEOUT);
+			System.out.println("Executing command "+cl.getExecutable());
 			Long l = result.get();
+			System.out.println("Result code "+l);
 			if(l!=ProcessExecutor.WATCHDOG_EXIT_VALUE){
 				sc.delete(jobid);
+				System.out.println("Job deleted");
 			} else {
 				sc.release(jobid, PRIORITY, DELAY_SECONDS);
+				System.out.println("Job released");
 			}
 		} catch (IOException | CancellationException | InterruptedException | ExecutionException e) {
 			sc.release(jobid, PRIORITY, DELAY_SECONDS);
+			e.printStackTrace(System.err);
+		} catch (Exception e){
+			sc.release(jobid, PRIORITY, DELAY_SECONDS);
+			e.printStackTrace(System.err);
 		}
 	}
 

@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.yaml.snakeyaml.Yaml;
-
 import com.amazonaws.auth.*;
 import com.amazonaws.services.cloudwatch.*;
 import com.amazonaws.services.cloudwatch.model.*;

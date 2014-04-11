@@ -115,25 +115,25 @@ public class SharedClient extends ClientImpl implements Client {
 	// stats-related
 	// ****************************************************************
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public synchronized Map<String, String> statsJob(long jobId) {
 		return client.statsJob(jobId);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public synchronized Map<String, String> statsTube(String tubeName) {
 		return client.statsTube(tubeName);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public synchronized Map<String, String> stats() {
 		return client.stats();
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public synchronized List<String> listTubes() {
 		return client.listTubes();
 	}
@@ -144,7 +144,7 @@ public class SharedClient extends ClientImpl implements Client {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public synchronized List<String> listTubesWatched() {
 		return client.listTubesWatched();
 	}
