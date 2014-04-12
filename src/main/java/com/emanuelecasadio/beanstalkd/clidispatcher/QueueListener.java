@@ -80,11 +80,20 @@ public class QueueListener implements Runnable {
 				String cmd;
 				try {
 					cmd = new String(job.getData(),"UTF-8");
-					c.touch(job.getJobId());
-					
+					c.touch(job.getJobId()); // More time, just in case (mostly useless)
+
+					/*
+					 *  I don't launch the command: I launch a new bash shell that executes the command
+					 */
+					/*CommandLine cl = new CommandLine("bash");
+					cl.addArgument("-c");
+					cl.addArgument(cmd);*/
 					CommandLine cl = CommandLine.parse(cmd);
 					try {
-						Future<Long> result = ProcessExecutor.runProcess(cl, new DummyProcessExecutorHandler(), Integer.parseInt(args[5]));
+						DummyProcessExecutorHandler dpeh = new DummyProcessExecutorHandler();
+						int watchdog_timer = Integer.parseInt(args[5])*1000; // MILLISECONDS!
+						
+						Future<Long> result = ProcessExecutor.runProcess(cl, dpeh, watchdog_timer);
 						System.out.println("Executing command "+cl.getExecutable());
 						Long l = result.get(); // This call is synchronous/blocking
 						System.out.println("Result code "+l);
