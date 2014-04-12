@@ -12,8 +12,11 @@ import com.surftools.BeanstalkClient.Client;
 import com.surftools.BeanstalkClientImpl.ClientImpl;
 
 /**
- * It keeps listening to the assigned queue and 
- * asynchronously dispatches messages to the cli.
+ * It keeps listening (asynchronously) to the assigned 
+ * queues and synchronously dispatches messages to the cli. 
+ *  
+ * It can't be asynchronous because of the 
+ * beanstalkd client.
  * 
  * @author Emanuele Casadio
  *
@@ -69,8 +72,9 @@ public class QueueListener implements Runnable {
 				 * time to do this job and I keep track of its
 				 * process so I can delete if from the queue
 				 * when it's done.
-				 * In the meanwhile, I'm ready to get another 
-				 * message, yay!
+				 * Unfortunately I cannot be ready for another
+				 * process because I cannot share the same 
+				 * beanstalkd session, so I wait for the result.
 				 */
 				
 				String cmd;
@@ -82,7 +86,7 @@ public class QueueListener implements Runnable {
 					try {
 						Future<Long> result = ProcessExecutor.runProcess(cl, new DummyProcessExecutorHandler(), Integer.parseInt(args[5]));
 						System.out.println("Executing command "+cl.getExecutable());
-						Long l = result.get();
+						Long l = result.get(); // This call is synchronous/blocking
 						System.out.println("Result code "+l);
 						if(l!=ProcessExecutor.WATCHDOG_EXIT_VALUE){
 							c.delete(job.getJobId());
@@ -98,6 +102,9 @@ public class QueueListener implements Runnable {
 					
 				} catch (UnsupportedEncodingException e) {
 					c.release(job.getJobId(), PRIORITY, DELAY);
+					e.printStackTrace(System.err);
+				} finally {
+					running_number.decrease();
 				}
 			} else {
 				/* I am not authorized to run this command so

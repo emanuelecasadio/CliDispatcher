@@ -50,7 +50,7 @@ class RunningProcessesHelper {
 	 * Decrements the counter of running processes
 	 * It also notifies that there is a new slot available
 	 */
-	public synchronized void decrease(int by){
+	public synchronized void decrease(){
 		count--;
 		notify();
 	}
