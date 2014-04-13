@@ -1,4 +1,4 @@
-package com.emanuelecasadio.beanstalkd.clidispatcher;
+package com.kopjra.beanstalkd.clidispatcher;
 
 import com.dzone.java.ProcessExecutorHandler;
 

@@ -1,4 +1,4 @@
-package com.emanuelecasadio.beanstalkd.clidispatcher;
+package com.kopjra.beanstalkd.clidispatcher;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;

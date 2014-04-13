@@ -1,4 +1,4 @@
-package com.emanuelecasadio.beanstalkd.cloudwatch;
+package com.kopjra.beanstalkd.cloudwatch;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;

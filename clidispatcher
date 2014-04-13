@@ -30,7 +30,7 @@ JAVA_HOME="/usr/lib/jvm/default-java"
 CLASS_PATH="$FILE_PATH/$NAME.jar:$FILE_PATH/lib/commons-daemon-1.0.15.jar"
 
 # The fully qualified name of the class to execute
-CLASS="com.emanuelecasadio.beanstalkd.clidispatcher.DaemonWrapper"
+CLASS="com.kopjra.beanstalkd.clidispatcher.DaemonWrapper"
 
 # Any command line arguments to be passed to the our Java Daemon implementations init() method
 # IP, PORT, MAX_CLIS, PRIORITY, MAX_SHUTDOWN_TIME, MAX_CLI_TIME, DELAY
