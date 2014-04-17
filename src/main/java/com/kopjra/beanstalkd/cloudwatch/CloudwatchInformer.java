@@ -32,11 +32,14 @@ public class CloudwatchInformer {
           CloudwatchInformer.class.getResourceAsStream( "AwsCredentials.properties" )
     );
 
+    String beanstalkdip = args[0];
+    int beanstalkdport = Integer.parseInt(args[1]);
+    
       try {
     	  // Publish Queue Length
     	  AmazonCloudWatch cw = new AmazonCloudWatchClient(credentials);
     	  cw.setEndpoint("monitoring.eu-west-1.amazonaws.com");
-    	  com.surftools.BeanstalkClient.Client bc = new com.surftools.BeanstalkClientImpl.ClientImpl("127.0.0.1", 11300, true);
+    	  com.surftools.BeanstalkClient.Client bc = new com.surftools.BeanstalkClientImpl.ClientImpl(beanstalkdip, beanstalkdport, true);
     	  List<String> lt = bc.listTubes();
     	  double tot = 0.0;
     	  for (String tube : lt) {
