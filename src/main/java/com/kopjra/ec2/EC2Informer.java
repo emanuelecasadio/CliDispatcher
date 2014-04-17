@@ -49,7 +49,7 @@ public class EC2Informer {
 			for(Instance instance : instances){
 				InstanceState s = instance.getState();
 				if(s.getName().equals("running")){
-					System.out.println(instance.getPrivateIpAddress());
+					System.out.print(instance.getPrivateIpAddress()+" ");
 				}
 			}
 		}
