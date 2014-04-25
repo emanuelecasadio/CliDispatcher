@@ -1,55 +1,56 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>kopjra.com.bstd</groupId>
-  <artifactId>BeanstalkdTests</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-<repositories>
-  <repository>
-    <id>Sonatype-public</id>
-    <name>SnakeYAML repository</name>
-    <url>http://oss.sonatype.org/content/groups/public/</url>
-  </repository>
-</repositories>  
-  <dependencies>
-  	<dependency>
-  		<groupId>com.surftools</groupId>
-  		<artifactId>BeanstalkClient</artifactId>
-  	</dependency>
-  <dependency>
-    <groupId>org.yaml</groupId>
-    <artifactId>snakeyaml</artifactId>
-  </dependency>
-<dependency>
-	<groupId>org.apache.commons</groupId>
-	<artifactId>commons-exec</artifactId>
-</dependency>  
-<dependency>
-	<groupId>commons-daemon</groupId>
-	<artifactId>commons-daemon</artifactId>
-</dependency>
-  </dependencies>
-  <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>com.surftools</groupId>
-  			<artifactId>BeanstalkClient</artifactId>
-  			<version>1.4.6</version>
-  		</dependency>
-  		<dependency>
-	<groupId>org.apache.commons</groupId>
-	<artifactId>commons-exec</artifactId>
-	<version>1.2</version>
-</dependency>
-  <dependency>
-    <groupId>org.yaml</groupId>
-    <artifactId>snakeyaml</artifactId>
-    <version>1.14-SNAPSHOT</version>
-  </dependency>  		
-<dependency>
-	<groupId>commons-daemon</groupId>
-	<artifactId>commons-daemon</artifactId>
-	<version>1.0.10</version>
-</dependency>  
-  	</dependencies>
-  </dependencyManagement>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>kopjra.com.bstd</groupId>
+	<artifactId>BeanstalkdTests</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<repositories>
+		<repository>
+			<id>Sonatype-public</id>
+			<name>SnakeYAML repository</name>
+			<url>http://oss.sonatype.org/content/groups/public/</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>com.surftools</groupId>
+			<artifactId>BeanstalkClient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-daemon</groupId>
+			<artifactId>commons-daemon</artifactId>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.surftools</groupId>
+				<artifactId>BeanstalkClient</artifactId>
+				<version>1.4.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-exec</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>1.14-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-daemon</groupId>
+				<artifactId>commons-daemon</artifactId>
+				<version>1.0.10</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
