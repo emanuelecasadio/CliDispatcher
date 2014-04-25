@@ -3,9 +3,9 @@ package com.kopjra.beanstalkd.clidispatcher;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.Future;
-
 import org.apache.commons.exec.CommandLine;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.dzone.java.ProcessExecutor;
 import com.surftools.BeanstalkClient.Job;
 import com.surftools.BeanstalkClient.Client;
@@ -41,8 +41,10 @@ public class QueueListener implements Runnable {
 	private RunningProcessesHelper running_number;
 	private DaemonWrapper daemon;
 	private String[] args;
+	private Logger logger;
 
 	public QueueListener(DaemonWrapper daemon, String ipaddr, int port, List<String> queues, RunningProcessesHelper running_number, String[] args){
+		logger = LoggerFactory.getLogger(QueueListener.class);
 		this.c = new ClientImpl(ipaddr, port, false);
 		//this.ipaddr = ipaddr;
 		//this.port = port;
@@ -69,8 +71,9 @@ public class QueueListener implements Runnable {
 		while(!daemon.isStopped()){
 			do{
 				try{
+					logger.debug("Reserving");
 					job = c.reserve(POLL_TIME);
-				} catch(Exception e) { e.printStackTrace(System.err); }
+				} catch(Exception e) { logger.error("Error reserving job",e); }
 			}while(job==null && !daemon.isStopped());
 
 			if(running_number.increase()){
@@ -86,6 +89,7 @@ public class QueueListener implements Runnable {
 
 				String cmd;
 				try {
+					logger.debug("Executing new job");
 					cmd = new String(job.getData(),"UTF-8");
 					/**
 					 * @todo Verify if the objid is still valid aka the message is still reserved and
@@ -105,24 +109,24 @@ public class QueueListener implements Runnable {
 						int watchdog_timer = Integer.parseInt(args[5])*1000; // MILLISECONDS!
 
 						Future<Long> result = ProcessExecutor.runProcess(cl, dpeh, watchdog_timer);
-						System.out.println("Executing command "+cl.getExecutable());
+						logger.info("Executing command: "+cl.getExecutable());
 						Long lresult = result.get(); // This call is synchronous/blocking
-						System.out.println("Result code "+lresult);
+						logger.info("Result code: "+lresult);
 						if(lresult!=ProcessExecutor.WATCHDOG_EXIT_VALUE){
 							c.delete(job.getJobId());
-							System.out.println("Job deleted"); // Everything's good
+							logger.info("Job completed, deleted from queue"); // Everything's good
 						} else {
 							c.release(job.getJobId(), PRIORITY, DELAY);
-							System.out.println("Job released"); // Not good
+							logger.error("Watchdog forced job kill, job released into queue"); // Not good
 						}
 					} catch (Exception e){
 						c.release(job.getJobId(), PRIORITY, DELAY); // Not good
-						e.printStackTrace(System.err);
+						logger.error("Other error happened, job released into queue",e);
 					}
 
 				} catch (UnsupportedEncodingException e) {
 					c.release(job.getJobId(), PRIORITY, DELAY); // Not good
-					e.printStackTrace(System.err);
+					logger.error("Unsupported encoding for the job, job released into queue",e);
 				} finally {
 					running_number.decrease(); // Eventually release the lock
 				}
@@ -131,6 +135,7 @@ public class QueueListener implements Runnable {
 				 * I release this job back into the queue with
 				 * priority 2000 (urgent is <1024), after DELAY seconds
 				 */
+				logger.info("Unauthorised to execute the job");
 				c.release(job.getJobId(), PRIORITY, DELAY);
 			}
 		}
