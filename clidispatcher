@@ -2,10 +2,12 @@
 # /etc/init.d/clidispatcher
 
 ### BEGIN INIT INFO
-# Provides: mydaemon
+# Provides: clidispatcher
 # Required-Start: $remote_fs $syslog
 # Required-Stop: $remote_fs $syslog
-# Short-Description: Starts the MyDaemon service
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Starts the clidispatcher service
 # Description: This file is used to start the daemon
 # and should be placed in /etc/init.d
 ### END INIT INFO
@@ -20,11 +22,13 @@ DESC="Beanstalkd CLI dispatcher"
 # The path to Jsvc
 EXEC="/usr/bin/jsvc"
 
-# The path to the folder containing MyDaemon.jar
+# The path to the folder containing clidispatcher.jar
 FILE_PATH="/usr/local/$NAME"
 
 # The path to the folder containing the java runtime
-JAVA_HOME="/usr/lib/jvm/default-java"
+# First is the default one, the second (enabled) is the dynamically loaded one
+#JAVA_HOME="/usr/lib/jvm/default-java"
+JAVA_HOME="$( readlink -f "$( which java )" | sed "s:bin/.*$::" )"
 
 # Our classpath including our jar file and the Apache Commons Daemon library
 CLASS_PATH="$FILE_PATH/$NAME.jar:$FILE_PATH/lib/commons-daemon-1.0.15.jar"
@@ -49,6 +53,7 @@ LOG_OUT="$FILE_PATH/log/$NAME.out"
 # System.err writes to this file...
 LOG_ERR="$FILE_PATH/err/$NAME.err"
 
+# IMPORTANT NOTE: If you get a "unknown parameter -cwd" error, you need to remove the -cwd parameter from the foruth line below
 jsvc_exec()
 {
     cd $FILE_PATH
