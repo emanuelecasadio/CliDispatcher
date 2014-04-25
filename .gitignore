@@ -1,4 +1,5 @@
 /src/main/java/com/kopjra/beanstalkd/cloudwatch/AwsCredentials.properties
+/src/main/java/com/kopjra/ec2/AwsCredentials.properties
 target/*
 .settings
 .project
