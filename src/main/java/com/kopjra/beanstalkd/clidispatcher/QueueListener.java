@@ -106,9 +106,10 @@ public class QueueListener implements Runnable {
 					CommandLine cl = CommandLine.parse(cmd);
 					try {
 						DummyProcessExecutorHandler dpeh = new DummyProcessExecutorHandler();
-						int watchdog_timer = Integer.parseInt(args[5])*1000; // MILLISECONDS!
+						long watchdog_timer = Long.parseLong(args[5])*1000; // MILLISECONDS!
 
 						Future<Long> result = ProcessExecutor.runProcess(cl, dpeh, watchdog_timer);
+						logger.debug("Watchgod timeout is: "+watchdog_timer);
 						logger.info("Executing command: "+cl.getExecutable());
 						Long lresult = result.get(); // This call is synchronous/blocking
 						logger.info("Result code: "+lresult);
