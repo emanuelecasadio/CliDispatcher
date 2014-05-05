@@ -2,6 +2,10 @@ package com.dzone.java;
 
 import org.apache.commons.exec.*;
 import org.apache.commons.exec.Executor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.kopjra.beanstalkd.clidispatcher.QueueListener;
 
 import java.io.IOException;
 import java.util.concurrent.*;
@@ -22,15 +26,35 @@ import java.util.concurrent.*;
  * @author      Nadav Azaria
  */
 public class ProcessExecutor {
+	private static ExecutorService executor = null;
+	private static Logger logger = LoggerFactory.getLogger(ProcessExecutor.class);
+	
     public static final Long  WATCHDOG_EXIT_VALUE = -999L;
 
-    public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException{
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+    public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, RejectedExecutionException{
+    	if(executor==null){
+    		logger.debug("Initializing new cached thread pool");
+    		executor = Executors.newCachedThreadPool();
+    		logger.debug("Cached thread pool created");
+    	}
+    	
+        logger.debug("Submitting new callable to the process pool");
         Future<Long> result =  executor.submit(new ProcessCallable(watchdogTimeout, handler, commandline));
-        executor.shutdown();
+        logger.debug("Callable submitted to the process pool");
         return result; 
   }
+    
+   /**
+    * Shuts down the executor so a new pool can (maybe) be prepared 
+    */
+   public static void shutdownExecutor(){
+	   if(executor!=null){
+		   logger.debug("Shutting down the current pool");
+		   executor.shutdown();
+		   executor = null;		   
+	   }
+   }
+    
    private static class ProcessCallable implements Callable<Long>{
 
         private long watchdogTimeout;
@@ -41,6 +65,7 @@ public class ProcessExecutor {
             this.watchdogTimeout = watchdogTimeout;
             this.handler = handler;
             this.commandline = commandline;
+            logger.debug("ProcessCallable created");
         }
 
         //@Override

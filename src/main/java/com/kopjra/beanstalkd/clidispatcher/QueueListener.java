@@ -65,7 +65,6 @@ public class QueueListener implements Runnable {
 	 * It's silly, but I always have to verify if the daemon received the
 	 * stop command, after every possible waiting time.
 	 */
-	@Override
 	public void run(){
 		Job job = null;
 		while(!daemon.isStopped()){

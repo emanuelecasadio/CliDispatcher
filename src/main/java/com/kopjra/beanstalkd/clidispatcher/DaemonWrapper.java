@@ -6,6 +6,8 @@ import org.apache.commons.daemon.DaemonInitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dzone.java.ProcessExecutor;
+
 /**
  * OS daemon wrapper class
  *
@@ -19,7 +21,7 @@ public class DaemonWrapper implements Daemon {
 	private Thread serverThread;
 	private boolean stopped;
 	private Object dumblock;
-	private final long MAX_WAIT = 60000; // Maximum waiting time in milliseconds
+	private final long MAX_WAIT = 120000; // Maximum waiting time in milliseconds
 	private Logger logger;
 
 	public synchronized boolean isStopped(){
@@ -55,6 +57,7 @@ public class DaemonWrapper implements Daemon {
 			dumblock.notifyAll();
 		}
 		try{
+			ProcessExecutor.shutdownExecutor();
 			serverThread.join(MAX_WAIT);
 		}catch(InterruptedException e){
 			logger.error(e.getMessage(),e);
