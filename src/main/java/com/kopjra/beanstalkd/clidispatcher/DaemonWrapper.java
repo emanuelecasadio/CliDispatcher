@@ -57,7 +57,7 @@ public class DaemonWrapper implements Daemon {
 			dumblock.notifyAll();
 		}
 		try{
-			ProcessExecutor.shutdownExecutor();
+			ProcessExecutor.shutdownPool();
 			serverThread.join(MAX_WAIT);
 		}catch(InterruptedException e){
 			logger.error(e.getMessage(),e);

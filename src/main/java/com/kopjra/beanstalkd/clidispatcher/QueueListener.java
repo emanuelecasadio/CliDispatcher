@@ -1,11 +1,14 @@
 package com.kopjra.beanstalkd.clidispatcher;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
+
 import org.apache.commons.exec.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.dzone.java.ProcessExecutor;
 import com.surftools.BeanstalkClient.Job;
 import com.surftools.BeanstalkClient.Client;
@@ -106,22 +109,29 @@ public class QueueListener implements Runnable {
 					try {
 						DummyProcessExecutorHandler dpeh = new DummyProcessExecutorHandler();
 						long watchdog_timer = Long.parseLong(args[5])*1000; // MILLISECONDS!
-
 						Future<Long> result = ProcessExecutor.runProcess(cl, dpeh, watchdog_timer);
+						
 						logger.debug("Watchgod timeout is: "+watchdog_timer);
-						logger.info("Executing command: "+cl.getExecutable());
+						String append_arguments = "";
+						try{
+							append_arguments = Arrays.toString(cl.getArguments());
+						}catch(Exception e){
+							append_arguments = "[could not fetch arguments]";
+						}
+						logger.info("Executing command: "+cl.getExecutable()+" "+append_arguments);
+						
 						Long lresult = result.get(); // This call is synchronous/blocking
-						logger.info("Result code: "+lresult);
 						if(lresult!=ProcessExecutor.WATCHDOG_EXIT_VALUE){
 							c.delete(job.getJobId());
-							logger.info("Job completed, deleted from queue"); // Everything's good
+							logger.info("result=("+lresult+"), Job "+cl.getExecutable()+" "+append_arguments+" completed, deleted from queue"); // Everything's good
 						} else {
 							c.release(job.getJobId(), PRIORITY, DELAY);
-							logger.error("Watchdog forced job kill, job released into queue"); // Not good
+							logger.error("result=("+lresult+"), Watchdog forced job kill, job released into queue, reinit. pool "); // Not good
+							ProcessExecutor.reinitializePool();
 						}
 					} catch (Exception e){
 						c.release(job.getJobId(), PRIORITY, DELAY); // Not good
-						logger.error("Other error happened, job released into queue",e);
+						logger.error("result=(NULL), Other error happened, job released into queue",e);
 					}
 
 				} catch (UnsupportedEncodingException e) {

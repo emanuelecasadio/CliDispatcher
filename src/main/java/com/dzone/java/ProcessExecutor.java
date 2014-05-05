@@ -31,11 +31,42 @@ public class ProcessExecutor {
 	
     public static final Long  WATCHDOG_EXIT_VALUE = -999L;
 
+    //==== POOL ROUTINES ====//
+    /**
+     * Initialize a new pool
+     */
+    private static synchronized void initPool(){
+    	if(executor==null){
+    		executor = Executors.newCachedThreadPool();
+    		logger.info("New thread pool created");
+    	}    	
+    }
+    
+    /**
+     * Shuts down the executor
+     */
+    public static synchronized void shutdownPool(){
+ 	   if(executor!=null){
+ 		   logger.info("Shutting down the current pool");
+ 		   executor.shutdown();
+ 	   }
+    }
+    
+    /**
+     * Prepares the executor to create a new pool
+     */
+    public static synchronized void reinitializePool(){
+ 	   if(executor!=null){
+ 		   shutdownPool();
+ 		   logger.info("Reinitializing a new pool");
+ 	   }
+ 	   executor = null;
+    }    
+  //==== POOL ROUTINES ====//
+    
     public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, RejectedExecutionException{
     	if(executor==null){
-    		logger.debug("Initializing new cached thread pool");
-    		executor = Executors.newCachedThreadPool();
-    		logger.debug("Cached thread pool created");
+    		initPool();
     	}
     	
         logger.debug("Submitting new callable to the process pool");
@@ -43,17 +74,6 @@ public class ProcessExecutor {
         logger.debug("Callable submitted to the process pool");
         return result; 
   }
-    
-   /**
-    * Shuts down the executor so a new pool can (maybe) be prepared 
-    */
-   public static void shutdownExecutor(){
-	   if(executor!=null){
-		   logger.debug("Shutting down the current pool");
-		   executor.shutdown();
-		   executor = null;		   
-	   }
-   }
     
    private static class ProcessCallable implements Callable<Long>{
 
@@ -70,6 +90,7 @@ public class ProcessExecutor {
 
         //@Override
         public Long call() throws Exception {
+        	logger.debug("Started");
             Executor executor = new DefaultExecutor();
             executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
             ExecuteWatchdog watchDog = new ExecuteWatchdog(watchdogTimeout);
@@ -77,15 +98,18 @@ public class ProcessExecutor {
             executor.setStreamHandler(new PumpStreamHandler(new MyLogOutputStream(handler, true),new MyLogOutputStream(handler, false)));
             Long exitValue;
             try {
+            	logger.debug("Successfully completed");
                 exitValue =  new Long(executor.execute(commandline));
 
             } catch (ExecuteException e) {
+            	logger.debug("Execute exception");
                 exitValue =  new Long(e.getExitValue());
             }
             if(watchDog.killedProcess()){
+            	logger.debug("Killed by watchdog");
                 exitValue =WATCHDOG_EXIT_VALUE;
             }
-
+            
             return exitValue;
         }
     }
