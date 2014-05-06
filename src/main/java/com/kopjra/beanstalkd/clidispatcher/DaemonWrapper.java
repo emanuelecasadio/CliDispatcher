@@ -33,7 +33,7 @@ public class DaemonWrapper implements Daemon {
 	}
 
 	public void init(DaemonContext daemonContext) throws DaemonInitException, Exception {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "ERROR");
 		logger = LoggerFactory.getLogger(DaemonWrapper.class);
 		logger.debug("DaemonWrapper initializing");
 		String[] args = daemonContext.getArguments();
