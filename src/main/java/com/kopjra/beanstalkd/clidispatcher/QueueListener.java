@@ -125,9 +125,10 @@ public class QueueListener implements Runnable {
 							c.delete(job.getJobId());
 							logger.info("result=("+lresult+"), Job "+cl.getExecutable()+" "+append_arguments+" completed, deleted from queue"); // Everything's good
 						} else {
-							c.release(job.getJobId(), PRIORITY, DELAY);
-							logger.error("result=("+lresult+"), Watchdog forced job kill, job released into queue, reinit. pool "); // Not good
-							ProcessExecutor.reinitializePool();
+							c.bury(job.getJobId(), PRIORITY);
+							logger.error("result=("+lresult+"), Watchdog forced job kill, job buried"); // Not good
+							// Mostly useless
+							//ProcessExecutor.reinitializePool();
 						}
 					} catch (Exception e){
 						c.release(job.getJobId(), PRIORITY, DELAY); // Not good
@@ -135,8 +136,8 @@ public class QueueListener implements Runnable {
 					}
 
 				} catch (UnsupportedEncodingException e) {
-					c.release(job.getJobId(), PRIORITY, DELAY); // Not good
-					logger.error("Unsupported encoding for the job, job released into queue",e);
+					c.bury(job.getJobId(), PRIORITY); // Not good
+					logger.error("Unsupported encoding for the job, job buried",e);
 				} finally {
 					running_number.decrease(); // Eventually release the lock
 				}
