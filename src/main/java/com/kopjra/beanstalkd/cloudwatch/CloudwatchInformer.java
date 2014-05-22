@@ -46,8 +46,6 @@ public class CloudwatchInformer {
 			Map<String,String> st = bc.statsTube(tube);
 			tot += Integer.parseInt(st.get("current-jobs-ready"));
 			tot += Integer.parseInt(st.get("current-jobs-reserved"));
-			tot += Integer.parseInt(st.get("current-jobs-delayed"));
-			tot += Integer.parseInt(st.get("current-jobs-buried"));
     	  }
 
     	  PutMetricDataRequest data = new PutMetricDataRequest();
