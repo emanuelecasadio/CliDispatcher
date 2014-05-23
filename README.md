@@ -17,6 +17,8 @@ Source dependencies are automatically resolved through Maven
 Step-by-step compilation:
 - `sudo apt-get install openjdk-7-jdk jsvc maven git beanstalkd` (install requirements with your favorite pkg manager)
 - Download source from github or directly clone the repository
+- Copy files in src/main/resources in the same folder, renaming them without the `.dist` suffix
+- Customize these new `.properties` files
 - Once you are in the project folder, run `mvn clean install`
 - Two jars should have been generated in the `target` folder
 
@@ -26,6 +28,7 @@ Step-by-step installation:
 - `sudo chmod 755 /etc/init.d/clidispatcher` (gives execution and read rights to everybody)
 - `sudo mkdir -p /usr/local/clidispatcher/lib` (creates the default FILE_PATH directory as well as the lib directory (you'll need it later))
 - `sudo cp ./target/BeanstalkdUtils-0.1-jar-with-dependencies.jar /usr/local/clidispatcher/clidispatcher.jar` (take the jar with dependencies, copy it in the FILE_PATH directory (default shown here)) and rename it as `clidispatcher.jar`)
+- Open the `clidispatcher.jar` with a zip editor, rename files in `*.properties.dist` removing the `.dist` suffix and customize them
 - `sudo wget -O /usr/local/clidispatcher/lib/commons-daemon-1.0.15.jar https://www.apache.org/dist/commons/daemon/binaries/commons-daemon-1.0.15.jar` (get the commons-daemon library and puts it into the right folder)
 - `sudo chown -R user:root /usr/local/clidispatcher` (give the root and the USER user (as specified in the clidispatcher upstart file) ownership rights for the FILE_PATH directory)
 - `sudo chmod -R 770 /usr/local/clidispatcher` (give them all rights)

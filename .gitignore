@@ -1,8 +1,4 @@
 /workers.log
-/README.md~
-AwsCredentials.properties
-/src/main/java/com/kopjra/beanstalkd/cloudwatch/AwsCredentials.properties
-/src/main/java/com/kopjra/ec2/AwsCredentials.properties
 target/*
 .settings
 .project
@@ -10,3 +6,7 @@ target/*
 build.xml
 cfg/*
 bin/*
+src/main/resources/AwsCredentials.properties
+src/main/resources/log4j-server.properties
+src/main/resources/log4j.properties
+
