@@ -1,3 +1,4 @@
+/workers.log
 /README.md~
 AwsCredentials.properties
 /src/main/java/com/kopjra/beanstalkd/cloudwatch/AwsCredentials.properties
