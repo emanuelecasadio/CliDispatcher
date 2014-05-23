@@ -29,7 +29,7 @@ public class EC2Informer {
 	  final String env = "staging";
     AWSCredentials credentials =
       new PropertiesCredentials(
-          EC2Informer.class.getResourceAsStream( "AwsCredentials.properties" )
+          EC2Informer.class.getResourceAsStream( "/AwsCredentials.properties" )
     );
     
       try {

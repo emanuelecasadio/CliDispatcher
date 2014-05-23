@@ -29,7 +29,7 @@ public class CloudwatchInformer {
 	  final String env = "staging";
     AWSCredentials credentials =
       new PropertiesCredentials(
-          CloudwatchInformer.class.getResourceAsStream( "AwsCredentials.properties" )
+          CloudwatchInformer.class.getResourceAsStream( "/AwsCredentials.properties" )
     );
 
     String beanstalkdip = args[0];

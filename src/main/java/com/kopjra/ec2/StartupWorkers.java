@@ -32,7 +32,7 @@ public class StartupWorkers {
 	  final String env = "prod";
     AWSCredentials credentials =
       new PropertiesCredentials(
-          StartupWorkers.class.getResourceAsStream( "AwsCredentials.properties" )
+          StartupWorkers.class.getResourceAsStream( "/AwsCredentials.properties" )
     );
     
       try {          

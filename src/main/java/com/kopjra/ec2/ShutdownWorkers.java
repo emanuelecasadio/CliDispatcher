@@ -32,7 +32,7 @@ public class ShutdownWorkers {
 	  final String env = "prod";
 	    AWSCredentials credentials =
 	    	      new PropertiesCredentials(
-	    	          ShutdownWorkers.class.getResourceAsStream( "AwsCredentials.properties" )
+	    	          ShutdownWorkers.class.getResourceAsStream( "/AwsCredentials.properties" )
 	    	    );
     
       try {          
