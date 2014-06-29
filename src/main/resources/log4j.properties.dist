@@ -1,5 +1,11 @@
-log4j.rootLogger=INFO, server
-log4j.appender.server=org.apache.log4j.net.SocketAppender
-log4j.appender.server.Port=4712
-log4j.appender.server.RemoteHost=localhost
-log4j.appender.server.ReconnectionDelay=10000
+# Client-based logging
+log4j.rootLogger=INFO, stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+
+# Server-based logging
+#log4j.rootLogger=INFO, server
+#log4j.appender.server=org.apache.log4j.net.SocketAppender
+#log4j.appender.server.Port=
+#log4j.appender.server.RemoteHost=
+#log4j.appender.server.ReconnectionDelay=10000
