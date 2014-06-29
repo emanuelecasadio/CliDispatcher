@@ -7,11 +7,15 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.auth.*;
 import com.amazonaws.services.cloudwatch.*;
 import com.amazonaws.services.cloudwatch.model.*;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.kopjra.beanstalkd.clidispatcher.CliDispatcher;
 
 /**
  * CloudWatch metric updater and EC2 instances monitoring tool
@@ -34,6 +38,7 @@ public class CloudwatchInformer {
 						.getResourceAsStream("/AwsCredentials.properties"));
 		InputStream inputStream = 
 			    CloudwatchInformer.class.getResourceAsStream("/CloudwatchInformer.properties");
+		Logger logger = LoggerFactory.getLogger(CloudwatchInformer.class);
 		
 		Properties props = new Properties();
 	    props.load(inputStream);
