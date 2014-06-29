@@ -22,8 +22,10 @@ import java.util.concurrent.*;
  * <li>Ability to kill the process in case it hung;</li>
  * <li>Get the process exit code.</li>
  * </ol>
+ * Modified by Emanuele Casadio
  * 
  * @author      Nadav Azaria
+ * @author      Emanuele Casadio
  */
 public class ProcessExecutor {
 	private static ExecutorService executor = null;
