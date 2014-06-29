@@ -63,10 +63,10 @@ public class HTTPAliveMetricDatumProvider implements MetricDatumProvider {
 	        connection.setReadTimeout(timeout);
 	        connection.setRequestMethod("GET");
 	        int responseCode = connection.getResponseCode();
-	        logger.info("ResponseCode is "+responseCode);
+	        logger.info(metricname+": response code is "+responseCode);
 	        return ((200 <= responseCode && responseCode <= 399) || (responseCode == 401));
 	    } catch (IOException exception) {
-	    	logger.info("Exception returned");
+	    	logger.info(metricname+": exception returned");
 	        return false;
 	    }
 	}
