@@ -5,8 +5,6 @@ import org.apache.commons.exec.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kopjra.beanstalkd.clidispatcher.QueueListener;
-
 import java.io.IOException;
 import java.util.concurrent.*;
 

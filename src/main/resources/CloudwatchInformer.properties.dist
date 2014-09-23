@@ -1,0 +1,16 @@
+env:prod
+
+beanstalkdip:127.0.0.1
+beanstalkdport:11300
+
+elasticsearchip:127.0.0.1
+elasticsearchport:9200
+
+proxyip:127.0.0.1
+proxyport:80
+
+webip:127.0.0.1
+webport:80
+
+btclient1ip:127.0.0.1
+btclient1port:9091

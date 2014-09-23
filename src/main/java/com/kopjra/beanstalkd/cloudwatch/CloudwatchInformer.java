@@ -15,7 +15,6 @@ import com.amazonaws.services.cloudwatch.*;
 import com.amazonaws.services.cloudwatch.model.*;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.kopjra.beanstalkd.clidispatcher.CliDispatcher;
 
 /**
  * CloudWatch metric updater and EC2 instances monitoring tool
@@ -31,7 +30,6 @@ public class CloudwatchInformer {
 	private static Set<MetricDatumProvider> mdps;
 
 	public static void main(String[] args) throws IOException {
-		final String env = "prod";
 		mdps = new HashSet<MetricDatumProvider>(10);
 		AWSCredentials credentials = new PropertiesCredentials(
 				CloudwatchInformer.class
@@ -42,6 +40,8 @@ public class CloudwatchInformer {
 		
 		Properties props = new Properties();
 	    props.load(inputStream);
+	    
+	    final String env = props.getProperty("env");
 
 		// Initializes the providers: Beanstalkd
 		String beanstalkdip = props.getProperty("beanstalkdip");

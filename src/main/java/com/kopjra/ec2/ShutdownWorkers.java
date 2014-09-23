@@ -1,29 +1,19 @@
 package com.kopjra.ec2;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import com.amazonaws.auth.*;
 import com.amazonaws.services.autoscaling.AmazonAutoScaling;
-import com.amazonaws.services.autoscaling.AmazonAutoScalingAsyncClient;
 import com.amazonaws.services.autoscaling.AmazonAutoScalingClient;
 import com.amazonaws.services.autoscaling.model.AutoScalingGroup;
-import com.amazonaws.services.autoscaling.model.DescribeAutoScalingGroupsRequest;
 import com.amazonaws.services.autoscaling.model.DescribeAutoScalingGroupsResult;
 import com.amazonaws.services.autoscaling.model.UpdateAutoScalingGroupRequest;
-import com.amazonaws.services.cloudwatch.*;
-import com.amazonaws.services.cloudwatch.model.*;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.ec2.*;
-import com.amazonaws.services.ec2.model.*;
 
 /**
  *
- * @author Emanuele Casadio
+ * @author "Emanuele Casadio <emanuele.casadio@kopjra.com>"
  *
  */
 public class ShutdownWorkers {	

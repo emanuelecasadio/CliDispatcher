@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import com.amazonaws.auth.*;
-import com.amazonaws.services.cloudwatch.*;
-import com.amazonaws.services.cloudwatch.model.*;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.*;

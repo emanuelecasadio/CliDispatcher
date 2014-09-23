@@ -9,4 +9,4 @@ bin/*
 src/main/resources/AwsCredentials.properties
 src/main/resources/log4j-server.properties
 src/main/resources/log4j.properties
-
+src/main/resources/CloudwatchInformer.properties

@@ -5,11 +5,11 @@
 	<artifactId>BeanstalkdUtils</artifactId>
 	<version>0.1</version>
 	<repositories>
-		<repository>
+		<!--<repository>
 			<id>Sonatype-public</id>
 			<name>SnakeYAML repository</name>
 			<url>http://oss.sonatype.org/content/groups/public/</url>
-		</repository>
+		</repository>-->
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -31,6 +31,7 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
+			<version>1.14</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -67,11 +68,6 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
 				<version>1.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>1.14-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-daemon</groupId>
