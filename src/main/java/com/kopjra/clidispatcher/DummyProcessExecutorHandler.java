@@ -1,4 +1,4 @@
-package com.kopjra.beanstalkd.clidispatcher;
+package com.kopjra.clidispatcher;
 
 import com.dzone.java.ProcessExecutorHandler;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ public class DummyProcessExecutorHandler implements ProcessExecutorHandler {
 	private Logger logger;
 	
 	public DummyProcessExecutorHandler(){
-		logger = LoggerFactory.getLogger(DaemonWrapper.class);
+		logger = LoggerFactory.getLogger(DummyProcessExecutorHandler.class);
 	}
 	
 	public void onStandardOutput(String msg) {

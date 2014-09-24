@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.kopjra.beanstalkd.clidispatcher;
+package com.kopjra.clidispatcher;
 
 /**
  * Useful in order to share in a thread-safe manner, small

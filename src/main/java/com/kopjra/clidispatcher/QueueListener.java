@@ -1,69 +1,29 @@
-package com.kopjra.beanstalkd.clidispatcher;
+package com.kopjra.clidispatcher;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Future;
-
 import org.apache.commons.exec.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.dzone.java.ProcessExecutor;
-import com.surftools.BeanstalkClient.Job;
-import com.surftools.BeanstalkClient.Client;
-import com.surftools.BeanstalkClientImpl.ClientImpl;
 
-/**
- * It keeps listening (asynchronously) to the assigned
- * queues and synchronously dispatches messages to the cli.
- *
- * It can't be asynchronous because of the
- * beanstalkd client.
- *
- * @author Emanuele Casadio
- *
- */
 public class QueueListener implements Runnable {
 
-	/*
-	 * Maximum blocking time
-	 */
-	public /*final*/ int POLL_TIME = 15;
-
-	/*
-	 * Default values overridden by parameters
-	 */
-	public /*final*/ int PRIORITY = 2000;
-	public /*final*/ int DELAY = 30;
-
-	private Client c;
-	//private List<String> queues;
-	//private int port;
-	//private String ipaddr;	
-	private RunningProcessesHelper running_number;
-	private DaemonWrapper daemon;
-	private String[] args;
-	private Logger logger;
-
-	public QueueListener(DaemonWrapper daemon, String ipaddr, int port, List<String> queues, RunningProcessesHelper running_number, String[] args){
+	protected Logger logger;
+	private RunningProcessesHelper running_process_helper;
+	private Stoppable daemon;
+	private int ttr;
+	private QueueClient client;
+	
+	public QueueListener(Stoppable d, String q, RunningProcessesHelper r, QueueClient c, int t){
 		logger = LoggerFactory.getLogger(QueueListener.class);
-		this.c = new ClientImpl(ipaddr, port, false);
-		//this.ipaddr = ipaddr;
-		//this.port = port;
-		//this.queues = queues;
-		this.running_number = running_number;
-		this.daemon = daemon;
-		this.args = args;
-
-		PRIORITY = Integer.parseInt(args[3]);
-		DELAY = Integer.parseInt(args[6]);
-
-		for (String queue : queues) {
-			this.c.watch(queue);
-		}
+		this.daemon = d;
+		this.running_process_helper = r;
+		this.client = c;
+		c.setQueue(q);
+		this.ttr = t;
 	}
-
+	
 	/**
 	 * It's silly, but I always have to verify if the daemon received the
 	 * stop command, after every possible waiting time.
@@ -74,11 +34,11 @@ public class QueueListener implements Runnable {
 			do{
 				try{
 					logger.debug("Reserving");
-					job = c.reserve(POLL_TIME);
+					job = client.reserveJob();
 				} catch(Exception e) { logger.error("Error reserving job",e); }
 			}while(job==null && !daemon.isStopped());
 
-			if(running_number.increase()){
+			if(running_process_helper.increase()){
 				/* I am authorized to run this command
 				 * Maybe I've slept a lot, so I reserve more
 				 * time to do this job and I keep track of its
@@ -92,23 +52,17 @@ public class QueueListener implements Runnable {
 				String cmd;
 				try {
 					logger.debug("Executing new job");
-					cmd = new String(job.getData(),"UTF-8");
+					cmd = job.getBody();
 					/**
 					 * @todo Verify if the objid is still valid aka the message is still reserved and
 					 * hasn't already been released
 					 */
-					c.touch(job.getJobId()); // More time, just in case (mostly useless)
-
-					/*
-					 *  I don't launch the command: I launch a new bash shell that executes the command
-					 */
-					/*CommandLine cl = new CommandLine("bash");
-					cl.addArgument("-c");
-					cl.addArgument(cmd);*/
+					//c.touch(job.getJobId())
+					
 					CommandLine cl = CommandLine.parse(cmd);
 					try {
 						DummyProcessExecutorHandler dpeh = new DummyProcessExecutorHandler();
-						long watchdog_timer = Long.parseLong(args[5])*1000; // MILLISECONDS!
+						long watchdog_timer = ttr*1000; // MILLISECONDS!
 						Future<Long> result = ProcessExecutor.runProcess(cl, dpeh, watchdog_timer);
 						
 						logger.debug("Watchgod timeout is: "+watchdog_timer);
@@ -122,24 +76,20 @@ public class QueueListener implements Runnable {
 						
 						Long lresult = result.get(); // This call is synchronous/blocking
 						if(lresult!=ProcessExecutor.WATCHDOG_EXIT_VALUE){
-							c.delete(job.getJobId());
+							client.deleteJob(job);
 							logger.info("result=("+lresult+"), Job "+cl.getExecutable()+" "+append_arguments+" completed, deleted from queue"); // Everything's good
 						} else {
-							c.bury(job.getJobId(), PRIORITY);
+							client.buryJob(job);							
 							logger.error("result=("+lresult+"), Watchdog forced job kill, job buried"); // Not good
-							// Mostly useless
-							//ProcessExecutor.reinitializePool();
 						}
 					} catch (Exception e){
-						c.release(job.getJobId(), PRIORITY, DELAY); // Not good
+						// Release
+						client.releaseJob(job);
 						logger.error("result=(NULL), Other error happened, job released into queue",e);
 					}
 
-				} catch (UnsupportedEncodingException e) {
-					c.bury(job.getJobId(), PRIORITY); // Not good
-					logger.error("Unsupported encoding for the job, job buried",e);
 				} finally {
-					running_number.decrease(); // Eventually release the lock
+					running_process_helper.decrease(); // Eventually release the lock
 				}
 			} else {
 				/* I am not authorized to run this command so
@@ -147,8 +97,11 @@ public class QueueListener implements Runnable {
 				 * priority 2000 (urgent is <1024), after DELAY seconds
 				 */
 				logger.info("Unauthorised to execute the job");
-				c.release(job.getJobId(), PRIORITY, DELAY);
+				if(job!=null){
+					client.releaseJob(job);
+				}
 			}
 		}
 	}
+
 }

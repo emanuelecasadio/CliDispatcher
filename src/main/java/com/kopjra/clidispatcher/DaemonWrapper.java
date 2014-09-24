@@ -1,4 +1,4 @@
-package com.kopjra.beanstalkd.clidispatcher;
+package com.kopjra.clidispatcher;
 
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
@@ -16,7 +16,7 @@ import com.dzone.java.ProcessExecutor;
  * @todo Override MAX_WAIT with the proper parameter
  * @author Emanuele Casadio
  */
-public class DaemonWrapper implements Daemon {
+public class DaemonWrapper implements Daemon, Stoppable {
 
 	private Thread serverThread;
 	private boolean stopped;
@@ -27,7 +27,7 @@ public class DaemonWrapper implements Daemon {
 	public synchronized boolean isStopped(){
 		return stopped;
 	}
-
+	
 	private synchronized void setStopped(boolean s){
 		stopped = s;
 	}

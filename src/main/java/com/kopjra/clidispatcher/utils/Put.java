@@ -1,4 +1,4 @@
-package com.kopjra.beanstalkd.utils;
+package com.kopjra.clidispatcher.utils;
 
 import com.surftools.BeanstalkClient.Client;
 import com.surftools.BeanstalkClientImpl.ClientImpl;

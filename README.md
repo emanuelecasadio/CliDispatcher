@@ -1,14 +1,15 @@
-BeanstalkdUtils
+CliDispatcher
 ===============
 
-A set of utilities for Beanstalkd
+A generic multithreaded Command Line Interface dispatcher.
+It fetches one or more queues (Beanstalkd or SQS) for a message and dispatch it as a shell command.
 
 System requirements:
 - jsvc(*)
 - java7 (openjdk-7-jdk for devs, openjdk-7-jre for everybody)
 - maven (dev only)
 - git (likely)
-- beanstalkd (if you want to test)
+- beanstalkd or SQS
 
 (*) If you want to specify the current working directory inside the jsvc_exec(), using the parameter -cwd, you need to use the latest jsvc version.
 

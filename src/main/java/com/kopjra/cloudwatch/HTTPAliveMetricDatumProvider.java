@@ -1,4 +1,4 @@
-package com.kopjra.beanstalkd.cloudwatch;
+package com.kopjra.cloudwatch;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

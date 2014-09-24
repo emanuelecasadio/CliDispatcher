@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 
 import org.apache.commons.daemon.DaemonInitException;
 
-import com.kopjra.beanstalkd.clidispatcher.DaemonWrapper;
+import com.kopjra.clidispatcher.DaemonWrapper;
 
 public class DaemonTest {
 
