@@ -1,11 +1,14 @@
 package com.kopjra.clidispatcher.sqs;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
 import com.kopjra.clidispatcher.Job;
 import com.kopjra.clidispatcher.QueueClient;
 
@@ -79,6 +82,18 @@ public class SQSClient implements QueueClient {
 	@Override
 	public void setQueue(String queue) {
 		queueUrl = queue;
+	}
+	
+	/**
+	 * @todo Roba schifosa!
+	 */
+	public void sendBulkMessage(List<String> messages){
+		List<SendMessageBatchRequestEntry> entries = new ArrayList<>(10);
+		Integer i=0;
+		for(String m : messages){
+			entries.add(new SendMessageBatchRequestEntry((i++).toString(), m));
+		}
+		c.sendMessageBatch(queueUrl, entries);
 	}
 	
 }
