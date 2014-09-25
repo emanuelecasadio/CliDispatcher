@@ -1,13 +1,18 @@
 package com.kopjra.clidispatcher;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.auth.PropertiesCredentials;
+import com.kopjra.cloudwatch.CloudwatchInformer;
 import com.kopjra.ec2.EC2Informer;
 
 /**
@@ -37,28 +42,70 @@ public class CliDispatcher extends Thread {
 	private String[] args;
 	private Object dumblock;
 	private Logger logger;
-	private final int POLL_TIME = 20;
+	private Properties properties;
+	/**
+	 * @todo Uniformare il poll time
+	 */
+	private int POLL_TIME = 20;
 
-	public CliDispatcher(String[] args){
-		// Non-daemonized CliDispatcher
+	private void commonConstructor(String[] args){
 		logger = LoggerFactory.getLogger(CliDispatcher.class);
 		this.args = args;
+		
+		// Retrieve arguments from parameter file
+		InputStream inputStream = 
+			    CloudwatchInformer.class.getResourceAsStream("/CliDispatcher.properties");
+		Logger logger = LoggerFactory.getLogger(CloudwatchInformer.class);
+		
+		properties = new Properties();
+	    try {
+	    	properties.load(inputStream);
+		} catch (IOException e) {
+			logger.error("Unable to load CliDispatcher properties");
+		}
+	}
+	
+	public CliDispatcher(String[] args){
+		// Non-daemonized CliDispatcher
+		commonConstructor(args);
 		this.dumblock = new Object();
 		this.daemon = new SimpleStoppable();
 		logger.debug("Non-daemonized CliDispatcher created");
 	}
 	
 	public CliDispatcher(DaemonWrapper daemon, String[] args, Object dumblock){
+		commonConstructor(args);
 		// Daemonized CliDispatcher
-		logger = LoggerFactory.getLogger(CliDispatcher.class);
 		this.daemon = daemon;
-		this.args = args;
 		this.dumblock = dumblock;
 		logger.debug("Daemonized CliDispatcher created");
 	}
 
 	public static void main(String[] args){
-		new CliDispatcher(args).start();
+		CliDispatcher clidisp = new CliDispatcher(args);
+		clidisp.start();
+		
+		// DA TESTARE BENE, PER ORA IGNORIAMO
+		/*
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String s;
+			do{
+				s=br.readLine();
+			}while(!s.equals("exit"));
+		} catch (IOException e) {
+			;
+		} finally {
+			SimpleStoppable ss = (SimpleStoppable) clidisp.daemon;
+			ss.setStopped(true);
+			try {
+				clidisp.join(60);
+			} catch (InterruptedException e) {
+				clidisp.stop();
+			}
+		}
+		*/
+		
 	}
 	
 	@Override
@@ -66,15 +113,15 @@ public class CliDispatcher extends Thread {
 		logger.debug("Running");
 		
 		HashMap<String,Object> map = new HashMap<>(5);
-		String type = args[0];
-		map.put("host", args[1]);
-		map.put("port", Integer.parseInt(args[2]));
-		String queue = args[3];
-		map.put("deadletterqueueurl", args[4]);
-		int maxprocs = Integer.parseInt(args[5]);
-		map.put("priority", Integer.parseInt(args[6]));
-		map.put("delay", Integer.parseInt(args[7]));
-		int ttr = Integer.parseInt(args[8]);
+		String type = properties.getProperty("type");
+		map.put("host", properties.getProperty("host"));
+		map.put("port", Integer.parseInt(properties.getProperty("port")));
+		String queue = properties.getProperty("queue");
+		map.put("deadletterqueue", properties.getProperty("deadletterqueue"));
+		int maxprocs = Integer.parseInt(properties.getProperty("maxprocs"));
+		map.put("priority", Integer.parseInt(properties.getProperty("priority")));
+		map.put("delay", Integer.parseInt(properties.getProperty("delay")));
+		int ttr = Integer.parseInt(properties.getProperty("ttr"));
 		map.put("ttr", ttr);
 		try {
 			map.put("awscredentials", new PropertiesCredentials(

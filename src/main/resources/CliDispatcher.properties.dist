@@ -1,0 +1,10 @@
+type:SQS
+host:hostname
+port:1111
+queue:queuenameorurl
+deadletterqueue:deadletterqueueorurl
+maxprocs:11
+priority:11
+delay:11
+ttr:11
+polltime:11

@@ -16,9 +16,13 @@ public class BDClient implements QueueClient {
 	private Client c;
 	private String host;
 	private int port;
-	private int priority;
-	private int delay;
-	private final int poll_time = 20;
+	private int priority = 2000;
+	private int delay = 0;
+	private int poll_time = 20;
+	
+	public BDClient(String host, int port){
+		c = new ClientImpl(host, port, false);
+	}
 	
 	@Override
 	public void deleteJob(Job j) {
@@ -45,23 +49,14 @@ public class BDClient implements QueueClient {
 	@Override
 	public void setAttribute(String key, Object value) {
 		switch(key){
-			case "host":
-				host = (String) value;
-				if(port>0){
-					c = new ClientImpl(host, port, false);
-				}
-				break;
-			case "port":
-				port = (Integer) value;
-				if(host!=null && !host.isEmpty()){
-					c = new ClientImpl(host, port, false);
-				}
-				break;				
 			case "priority":
 				priority = (Integer) value;
 				break;
 			case "delay":
 				delay = (Integer) value;
+				break;
+			case "poll_time":
+				poll_time = (Integer) value;
 				break;				
 		}
 	}

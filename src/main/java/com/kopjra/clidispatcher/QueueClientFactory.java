@@ -10,12 +10,12 @@ public class QueueClientFactory {
 		BD, SQS
 	}
 	
-	public static QueueClient newQueueClient(QueueClientType type, Map<String,Object> construction_parameters){
+	public static QueueClient newQueueClient(QueueClientType type, Map<String,Object> cpars){
 		switch(type){
 		case BD:
-			return new BDClient();
+			return new BDClient((String)cpars.get("host"), (Integer)cpars.get("port"));
 		case SQS:
-			return new SQSClient((com.amazonaws.auth.AWSCredentials) construction_parameters.get("awscredentials"),(String) construction_parameters.get("host"));
+			return new SQSClient((com.amazonaws.auth.AWSCredentials) cpars.get("awscredentials"),(String) cpars.get("host"));
 		default:
 			return null;
 		}
