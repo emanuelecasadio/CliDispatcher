@@ -30,10 +30,10 @@ public class SQSClient implements QueueClient {
 
 	@Override
 	public void buryJob(Job j) {
-		if(dead_letter_queue!=null && !dead_letter_queue.isEmpty()){
+		//if(dead_letter_queue!=null && !dead_letter_queue.isEmpty()){
 			c.sendMessage(dead_letter_queue, j.getBody());
 			c.deleteMessage(queueUrl, ((SQSJob)j).message.getReceiptHandle());
-		}
+		//}
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class SQSClient implements QueueClient {
 	@Override
 	public void setAttribute(String key, Object value) {
 		switch(key){
-			case "deadletterqueueurl":
+			case "deadletterqueue":
 				dead_letter_queue = (String) value;
 				break;
 		}

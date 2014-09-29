@@ -35,7 +35,9 @@ public class QueueListener implements Runnable {
 				try{
 					logger.debug("Reserving");
 					job = client.reserveJob();
-				} catch(Exception e) { logger.error("Error reserving job",e); }
+				} catch(Exception e) {
+					logger.error("Error reserving job",e);
+				}
 			}while(job==null && !daemon.isStopped());
 
 			if(running_process_helper.increase()){
@@ -75,17 +77,23 @@ public class QueueListener implements Runnable {
 						logger.info("Executing command: "+cl.getExecutable()+" "+append_arguments);
 						
 						Long lresult = result.get(); // This call is synchronous/blocking
-						if(lresult!=ProcessExecutor.WATCHDOG_EXIT_VALUE){
-							client.deleteJob(job);
-							logger.info("result=("+lresult+"), Job "+cl.getExecutable()+" "+append_arguments+" completed, deleted from queue"); // Everything's good
-						} else {
+						
+						if(lresult==ProcessExecutor.WATCHDOG_EXIT_VALUE){
 							client.buryJob(job);							
-							logger.error("result=("+lresult+"), Watchdog forced job kill, job buried"); // Not good
+							logger.error("result=("+lresult+"),job=("+cl.getExecutable()+" "+append_arguments+") watchdog forced to kill, buried"); // Not good							
+						} else if(lresult!=0){
+							client.buryJob(job);							
+							logger.error("result=("+lresult+"),job=("+cl.getExecutable()+" "+append_arguments+") error occured, buried"); // Not good														
+						} else {
+							client.deleteJob(job);
+							logger.info("result=("+lresult+"),job=("+cl.getExecutable()+" "+append_arguments+") completed, deleted"); // Everything's good							
 						}
+						//+cl.getExecutable()+" "+append_arguments+
+						
 					} catch (Exception e){
 						// Release
 						client.releaseJob(job);
-						logger.error("result=(NULL), Other error happened, job released into queue",e);
+						logger.error("result=(NULL), Generic error happened, job released into queue",e);
 					}
 
 				} finally {

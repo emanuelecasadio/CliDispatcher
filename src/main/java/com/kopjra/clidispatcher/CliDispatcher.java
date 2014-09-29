@@ -118,7 +118,7 @@ public class CliDispatcher extends Thread {
 		map.put("port", Integer.parseInt(properties.getProperty("port")));
 		String queue = properties.getProperty("queue");
 		map.put("deadletterqueue", properties.getProperty("deadletterqueue"));
-		int maxprocs = Integer.parseInt(properties.getProperty("maxprocs"));
+		int maxprocs = Integer.parseInt(args[0]);
 		map.put("priority", Integer.parseInt(properties.getProperty("priority")));
 		map.put("delay", Integer.parseInt(properties.getProperty("delay")));
 		int ttr = Integer.parseInt(properties.getProperty("ttr"));

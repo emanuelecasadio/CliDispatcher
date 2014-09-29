@@ -3,9 +3,6 @@ package com.kopjra.clidispatcher.beanstalkd;
 import java.util.Map;
 import java.util.Set;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.kopjra.clidispatcher.Job;
 import com.kopjra.clidispatcher.QueueClient;
 import com.surftools.BeanstalkClient.Client;
